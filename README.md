@@ -1,5 +1,12 @@
 # Risk, Leverage and Capital Structure under the Basel III Regime
 
+## Key Takeaways (for recruiters)
+
+- Built a quarterly panel dataset for 8 U.S. G-SIB banks (2010–2025)
+- Conducted panel regressions with fixed effects and clustered standard errors
+- Tested the Adrian–Shin risk–leverage mechanism under Basel III constraints
+- Found weaker procyclicality and evidence that the Supplementary Leverage Ratio constrains leverage adjustment
+- Implemented full pipeline in Python (data cleaning, transformation, regression, diagnostics)
 This repository contains the data pipeline, validation scripts, figures, and regression code used in the master's thesis:
 
 *Risk, Leverage and Capital Structure under the Basel III Regime: An extension of Adrian & Shin's framework to the Basel III period*
