@@ -1,27 +1,25 @@
-"""Build harmonized 99% VaR measures from the raw Excel source.
+"""
+Build harmonized 99% VaR from the raw Excel source.
 
-The script reads bank-level VaR observations reported at different confidence
-levels and produces comparable 99% VaR series using two approaches:
-1. Gaussian scaling from 95% to 99%.
-2. A Bank of America empirical scaling factor of 2.0.
+Banks report VaR at different confidence levels. This script puts all reported
+VaR series on a common 99% basis so they can be merged into the panel dataset.
+Reported 99% VaR is kept as-is; reported 95% VaR is scaled to 99% using the
+normal-distribution quantile ratio.
 """
 
 import pandas as pd
 import numpy as np
 from scipy.stats import norm
 
-# File paths
+# Input workbook with manually collected VaR data and output CSV used later by
+# the panel-building script.
 INPUT_FILE = "data/raw/VaR_python.xlsx"
 OUTPUT_FILE = "output/data/var_99.csv"
 
-# Gaussian scaling factor from the standard normal distribution
+# Gaussian scaling factor from the standard normal distribution.
 z_095 = norm.ppf(0.95)  # 95% quantile
 z_099 = norm.ppf(0.99)  # 99% quantile
 GAUSSIAN_FACTOR = z_099 / z_095
-
-# Bank of America empirical scaling factor
-BOA_FACTOR = 2.0
-
 
 def load_var_data(file_path):
     """Load raw VaR data from the Excel layout used in the source workbook."""
@@ -43,7 +41,8 @@ def load_var_data(file_path):
     df[0] = pd.to_datetime(df[0], errors='coerce')
     df = df.dropna(subset=[0]).reset_index(drop=True)  # Keep only valid observation rows.
     
-    # Assemble a cleaned table with explicit bank/level column names.
+    # Assemble a cleaned table with explicit bank/level column names. This
+    # converts the Excel layout into a normal table that is easier to process.
     result = pd.DataFrame()
     result['year'] = df[0]
     
@@ -106,7 +105,7 @@ def harmonize_var(df):
                 banks[bank] = {}
             banks[bank][level] = row[col]
         
-        # Build both 99% VaR series for each bank-date observation.
+        # Build one harmonized 99% VaR series for each bank-date observation.
         for bank, values in banks.items():
             var_95 = values.get('95', np.nan)
             var_99 = values.get('99', np.nan)
@@ -118,20 +117,11 @@ def harmonize_var(df):
                 var_99_gaussian = var_95 * GAUSSIAN_FACTOR
             else:
                 var_99_gaussian = np.nan
-            
-            # Apply the same fallback logic for the empirical scaling rule.
-            if pd.notna(var_99):
-                var_99_boa = var_99
-            elif pd.notna(var_95):
-                var_99_boa = var_95 * BOA_FACTOR
-            else:
-                var_99_boa = np.nan
-            
+
             results.append({
                 'bank': bank,
                 'date': date,
-                'var_99_gaussian': var_99_gaussian,
-                'var_99_boa_factor': var_99_boa
+                'var_99_gaussian': var_99_gaussian
             })
     
     return pd.DataFrame(results)
@@ -148,12 +138,10 @@ def main():
     print(f"Loaded {len(df)} rows")
     
     # Convert all series to a comparable 99% confidence level.
-    print("\nConverting all VaR to 99% using two methods:")
-    print(f"  1. Gaussian approximation:")
-    print(f"     z_0.95 = {z_095:.6f}")
-    print(f"     z_0.99 = {z_099:.6f}")
-    print(f"     Conversion factor = {GAUSSIAN_FACTOR:.6f}")
-    print(f"  2. Bank of America empirical factor: {BOA_FACTOR}")
+    print("\nConverting all VaR to 99% using Gaussian approximation:")
+    print(f"  z_0.95 = {z_095:.6f}")
+    print(f"  z_0.99 = {z_099:.6f}")
+    print(f"  Conversion factor = {GAUSSIAN_FACTOR:.6f}")
     
     result = harmonize_var(df)
     
@@ -166,7 +154,7 @@ def main():
     # Save the harmonized dataset.
     result.to_csv(OUTPUT_FILE, index=False)
     print(f"\nSaved to {OUTPUT_FILE}")
-    print(f"Output columns: bank, date, var_99_gaussian, var_99_boa_factor")
+    print(f"Output columns: bank, date, var_99_gaussian")
     
     return result
 

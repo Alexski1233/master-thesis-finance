@@ -1,13 +1,20 @@
-"""Build a bank-level quarterly panel dataset from raw Excel source files."""
+"""
+Build a bank-level quarterly panel dataset from raw Excel source files.
+
+The source Excel files are not normal flat datasets. Each bank workbook contains
+many accounting rows and quarterly dates across columns. This script extracts the
+rows needed for the thesis, stacks all banks into one long panel, and merges the
+harmonized 99% VaR series.
+"""
 
 import pandas as pd
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-PROJECT_ROOT = SCRIPT_DIR.parent
-BALANCE_DIR = SCRIPT_DIR / "Balansesheet_v2"
+PROJECT_ROOT = SCRIPT_DIR.parents[1]
+BALANCE_DIR = PROJECT_ROOT / "data/raw/balance_sheets_final"
 VAR_PATH = PROJECT_ROOT / "output/data/var_99.csv"
-OUT_PATH = SCRIPT_DIR / "dataframe.csv"
+OUT_PATH = PROJECT_ROOT / "data/processed/panel.csv"
 
 BANK_FILES = {
     "bankofamerica": "bankofamerica.xlsx",
@@ -20,12 +27,13 @@ BANK_FILES = {
     "wellsfargo": "wellsfargo.xlsx",
 }
 
+# Only these workbook sheets are needed for the final thesis variables.
 SHEETS = {
     "bs": "Balance Sheet",
     "fs": "Financial Summary",
-    "inc": "Income Statement",
 }
 
+# Mapping from final panel variable names to the row labels in the Excel files.
 VARIABLES = {
     "total_assets": {"sheet": "bs", "label": "Total Assets", "exact": True},
     "total_equity": {
@@ -40,7 +48,7 @@ VARIABLES = {
     "roa": {"sheet": "fs", "label": "Return on Average Total Assets", "exact": False},
     "roe": {"sheet": "fs", "label": "Return on Average Common Equity - % (Income available to Common excluding Extraordinary Items), TTM", "exact": True},
     "dividend_payout_ratio": {"sheet": "fs", "label": "Dividend Payout Ratio - %", "exact": True},
-    "repo":{"sheet": "bs", "label": "Securities Sold Under Repurchase Agreements & Federal Funds Purchased", "exact": False},
+    "repo": {"sheet": "bs", "label": "Securities Sold Under Repurchase Agreements & Federal Funds Purchased", "exact": False},
 }
 
 
@@ -89,6 +97,7 @@ def extract_bank_data(bank: str, file_path: Path) -> pd.DataFrame:
     sheets = {key: read_sheet(file_path, sheet_name) for key, sheet_name in SHEETS.items()}
     dates = get_dates(sheets["bs"])
 
+    # Start with dates as the index, then add one extracted variable at a time.
     bank_df = pd.DataFrame(index=dates)
 
     for variable_name, config in VARIABLES.items():
@@ -123,6 +132,7 @@ def build_long_panel() -> pd.DataFrame:
 
     panel = pd.concat(bank_frames, ignore_index=True)
 
+    # Merge harmonized VaR into the accounting panel by bank and quarter.
     var_df = pd.read_csv(VAR_PATH)
     var_df["date"] = pd.to_datetime(var_df["date"]).dt.date
     var_df = var_df.rename(columns={"var_99_gaussian": "total_var"})[["bank", "date", "total_var"]]
@@ -151,6 +161,7 @@ def build_long_panel() -> pd.DataFrame:
 def main() -> None:
     """Build and save the final panel dataset."""
     long_panel = build_long_panel()
+    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     long_panel.to_csv(OUT_PATH, index=False)
 
 

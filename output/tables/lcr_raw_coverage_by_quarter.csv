@@ -1,0 +1,65 @@
+quarter,total_banks,banks_with_lcr,missing_banks
+2010Q1,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2010Q2,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2010Q3,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2010Q4,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2011Q1,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2011Q2,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2011Q3,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2011Q4,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2012Q1,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2012Q2,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2012Q3,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2012Q4,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2013Q1,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2013Q2,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2013Q3,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2013Q4,8,0,"bankofamerica, bny, citigroup, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2014Q1,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2014Q2,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2014Q3,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2014Q4,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2015Q1,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2015Q2,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2015Q3,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2015Q4,8,1,"bankofamerica, bny, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2016Q1,8,2,"bankofamerica, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2016Q2,8,2,"bankofamerica, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2016Q3,8,2,"bankofamerica, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2016Q4,8,2,"bankofamerica, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2017Q1,8,2,"bankofamerica, goldmansachs, jpmorgan, morganstanley, statestreet, wellsfargo"
+2017Q2,8,5,"bankofamerica, goldmansachs, morganstanley"
+2017Q3,8,8,
+2017Q4,8,8,
+2018Q1,8,8,
+2018Q2,8,8,
+2018Q3,8,8,
+2018Q4,8,8,
+2019Q1,8,7,bankofamerica
+2019Q2,8,7,bankofamerica
+2019Q3,8,7,bankofamerica
+2019Q4,8,8,
+2020Q1,8,8,
+2020Q2,8,8,
+2020Q3,8,8,
+2020Q4,8,7,bny
+2021Q1,8,8,
+2021Q2,8,8,
+2021Q3,8,8,
+2021Q4,8,8,
+2022Q1,8,8,
+2022Q2,8,8,
+2022Q3,8,8,
+2022Q4,8,8,
+2023Q1,8,8,
+2023Q2,8,8,
+2023Q3,8,8,
+2023Q4,8,8,
+2024Q1,8,8,
+2024Q2,8,8,
+2024Q3,8,8,
+2024Q4,8,8,
+2025Q1,8,8,
+2025Q2,8,8,
+2025Q3,8,8,
+2025Q4,8,7,statestreet

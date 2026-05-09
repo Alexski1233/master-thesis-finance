@@ -1,0 +1,16 @@
+variable,stat,M1_native_99_only,M1_BoA_factor
+d_ln_unit_var_lag,coef,+0.0114***,+0.0118**
+d_ln_unit_var_lag,tstat,(2.75),(2.16)
+size_lag,coef,-0.1219***,-0.0741**
+size_lag,tstat,(-2.92),(-2.58)
+roa_lag,coef,-0.0028,+0.0089***
+roa_lag,tstat,(-0.25),(2.68)
+Status,,OK,OK
+Error,,,
+N (obs),,256,510
+N (banks),,4,8
+R2,,-0.0864,-0.0669
+Bank FE,,Yes,Yes
+Time FE,,Yes,Yes
+Period,,2010-03-31 - 2025-12-31,2010-03-31 - 2025-12-31
+Lagged leverage,,No,No

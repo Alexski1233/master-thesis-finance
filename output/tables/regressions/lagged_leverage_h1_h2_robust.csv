@@ -1,0 +1,26 @@
+variable,stat,M1_baseline_lagged_leverage,M1_first_diff_lagged_leverage,M2_bank_type_lagged_leverage,M2_bank_type_first_diff_lagged_leverage
+d_ln_unit_var_lag,coef,+0.0116,+0.0101,+0.0130,+0.0110
+d_ln_unit_var_lag,tstat,(1.26),(1.12),(1.48),(1.32)
+d_ln_leverage_lag,coef,-0.1944**,-0.0548,-0.1946**,-0.0560
+d_ln_leverage_lag,tstat,(-2.18),(-0.54),(-2.23),(-0.56)
+size_lag,coef,-0.0595***,-,-0.0597***,-
+size_lag,tstat,(-2.89),,(-2.89),
+roa_lag,coef,+0.0088,-,+0.0088,-
+roa_lag,tstat,(1.19),,(1.20),
+d_size_lag,coef,-,-0.2205*,-,-0.2199*
+d_size_lag,tstat,,(-1.82),,(-1.81)
+d_roa_lag,coef,-,-0.0040,-,-0.0039
+d_roa_lag,tstat,,(-0.42),,(-0.41)
+d_ln_unit_var_x_market,coef,-,-,-0.0127,-0.0037
+d_ln_unit_var_x_market,tstat,,,(-0.54),(-0.16)
+d_ln_unit_var_x_custody,coef,-,-,-0.0014,-0.0023
+d_ln_unit_var_x_custody,tstat,,,(-0.07),(-0.10)
+Status,,OK,OK,OK,OK
+Error,,,,,
+N (obs),,510,509,510,509
+N (banks),,8,8,8,8
+R2,,-0.0218,0.0403,-0.0209,0.0406
+Bank FE,,Yes,No,Yes,No
+Time FE,,Yes,Yes,Yes,Yes
+Period,,2010-03-31 - 2025-12-31,2010-03-31 - 2025-12-31,2010-03-31 - 2025-12-31,2010-03-31 - 2025-12-31
+Lagged leverage,,Yes,Yes,Yes,Yes

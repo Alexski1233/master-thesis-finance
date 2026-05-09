@@ -1,25 +1,30 @@
-"""Compute VIF diagnostics for the panel regression specifications."""
+"""
+Compute VIF diagnostics for the panel regression specifications.
+
+Purpose in the thesis:
+- VIF is used to check whether regressors are highly collinear.
+- The interaction models mechanically combine UnitVaR with LCR, CET1, and SLR,
+  so these models are the most likely place to see elevated VIF values.
+- The output tables are appendix/robustness diagnostics, not main estimates.
+"""
 
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
 
-# ============================================================
-# 1) LOAD DATA
-# ============================================================
-DATA_PATH = "dataframe/dataframe.csv"   # Update the path if the dataset location changes.
+# Load the same final panel dataset used by the regression pipeline.
+DATA_PATH = "data/processed/panel.csv"
 
 df = pd.read_csv(DATA_PATH, parse_dates=["date"])
 df = df.sort_values(["bank", "date"]).copy()
 
-# ============================================================
-# 2) RECREATE THE MODEL VARIABLES
-# ============================================================
-# Baseline leverage and unit VaR measures.
+# Recreate the variables used in the regression specifications. This keeps the
+# VIF diagnostic independent from the regression output tables.
 df["leverage"] = df["total_assets"] / df["total_equity"]
 df["unitvar"]  = df["total_var"] / df["total_assets"]
 
-# Log transforms used in the regression specifications.
+# Log transforms used in the regression specifications. Logs require strictly
+# positive values, so the script stops if invalid observations are present.
 if (df["leverage"] <= 0).any():
     raise ValueError("Fant leverage <= 0. Log kan ikke tas.")
 if (df["unitvar"] <= 0).any():
@@ -28,10 +33,11 @@ if (df["unitvar"] <= 0).any():
 df["ln_leverage"] = np.log(df["leverage"])
 df["ln_unitvar"]  = np.log(df["unitvar"])
 
-# Bank size proxy.
+# Bank size proxy: log total assets.
 df["size"] = np.log(df["total_assets"])
 
-# Group by bank before computing first differences and lags.
+# Group by bank before computing first differences and lags. This ensures that
+# a lag never crosses from one bank to another.
 g = df.groupby("bank", group_keys=False)
 
 df["dln_leverage"] = g["ln_leverage"].diff()
@@ -39,7 +45,8 @@ df["dln_unitvar"]  = g["ln_unitvar"].diff()
 df["dsize"]        = g["size"].diff()
 df["droa"]         = g["roa"].diff()
 
-# Lagged variables used by the regression models.
+# Lagged variables used by the regression models. The suffix "_l1" means the
+# previous quarter within the same bank.
 for v in [
     "dln_leverage", "dln_unitvar",
     "size", "roa",
@@ -48,7 +55,7 @@ for v in [
 ]:
     df[f"{v}_l1"] = g[v].shift(1)
 
-# Bank-group indicators.
+# Bank-group indicators used in H1-H2 interaction specifications.
 MARKET_BANKS  = ["goldmansachs", "morganstanley"]
 CUSTODY_BANKS = ["bny", "statestreet"]
 
@@ -59,17 +66,20 @@ df["custody"] = df["bank"].isin(CUSTODY_BANKS).astype(int)
 df["dln_unitvar_l1_x_market"]  = df["dln_unitvar_l1"] * df["market"]
 df["dln_unitvar_l1_x_custody"] = df["dln_unitvar_l1"] * df["custody"]
 
-# Interaction terms for the regulatory-ratio models.
-df["dln_unitvar_l1_x_lcr"]  = df["dln_unitvar_l1"] * df["lcr_ratio_l1"]
-df["dln_unitvar_l1_x_cet1"] = df["dln_unitvar_l1"] * df["cet1_ratio_l1"]
-df["dln_unitvar_l1_x_slr"]  = df["dln_unitvar_l1"] * df["slr_ratio_l1"]
+# Interaction terms for the regulatory-ratio models. The regulatory ratios are
+# mean-centered before interaction construction to reduce mechanical
+# multicollinearity while preserving model fit and marginal effects.
+for v in ["lcr_ratio_l1", "cet1_ratio_l1", "slr_ratio_l1"]:
+    df[f"{v}_centered"] = df[v] - df[v].mean()
 
-# Quarter identifier used to partial out time fixed effects.
+df["dln_unitvar_l1_x_lcr"]  = df["dln_unitvar_l1"] * df["lcr_ratio_l1_centered"]
+df["dln_unitvar_l1_x_cet1"] = df["dln_unitvar_l1"] * df["cet1_ratio_l1_centered"]
+df["dln_unitvar_l1_x_slr"]  = df["dln_unitvar_l1"] * df["slr_ratio_l1_centered"]
+
+# Quarter identifier used to partial out time fixed effects in the VIF procedure.
 df["quarter_id"] = df["date"].dt.to_period("Q").astype(str)
 
-# ============================================================
-# 3) MODEL SPECIFICATIONS
-# ============================================================
+# Model specifications included in the VIF appendix tables.
 MODELS = {
     # ---------- H1-H2 ----------
     "H1H2_baseline": {
@@ -162,9 +172,6 @@ MODELS = {
     },
 }
 
-# ============================================================
-# 4) HELPER FUNCTIONS
-# ============================================================
 def residualize_on_fe(data, varname, bank_fe=False, time_fe=False):
     """
     Apply the Frisch-Waugh-Lovell step to remove bank and/or time fixed effects
@@ -172,6 +179,8 @@ def residualize_on_fe(data, varname, bank_fe=False, time_fe=False):
     """
     y = data[varname].astype(float)
 
+    # Fixed effects are removed first because VIF should measure collinearity
+    # among regressors after accounting for the same fixed effects as the model.
     fe_parts = []
     if bank_fe:
         fe_parts.append(pd.get_dummies(data["bank"], drop_first=True, dtype=float))
@@ -228,9 +237,8 @@ def vif_with_aux_regressions(data, xvars, bank_fe=False, time_fe=False):
     return out
 
 
-# ============================================================
-# 5) RUN VIF FOR ALL MODELS
-# ============================================================
+# Run VIF for each model and keep both detailed variable-level results and a
+# compact model-level summary.
 all_results = []
 max_vif_rows = []
 
@@ -243,6 +251,8 @@ for model_name, spec in MODELS.items():
         cols_needed
     ].copy()
 
+    # Use the same complete-case logic as the regressions: only observations
+    # with all variables in a model are included.
     d = d.dropna().reset_index(drop=True)
 
     vif_table = vif_with_aux_regressions(
@@ -268,9 +278,7 @@ for model_name, spec in MODELS.items():
 vif_results = pd.concat(all_results, ignore_index=True)
 vif_summary = pd.DataFrame(max_vif_rows).sort_values("max_VIF", ascending=False)
 
-# ============================================================
-# 6) PRINT AND SAVE RESULTS
-# ============================================================
+# Print results for quick inspection and save CSV files for the thesis appendix.
 pd.set_option("display.max_rows", 200)
 pd.set_option("display.max_columns", 20)
 pd.set_option("display.width", 200)

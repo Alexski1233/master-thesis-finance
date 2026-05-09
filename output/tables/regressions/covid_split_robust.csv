@@ -1,0 +1,32 @@
+variable,stat,M1_pre_covid,M1_post_covid,M2_pre_covid_bank_type,M2_post_covid_bank_type,M3_LCR_pre_covid,M3_LCR_post_covid,M3_CET1_pre_covid,M3_CET1_post_covid,M3_SLR_pre_covid,M3_SLR_post_covid
+d_ln_unit_var_lag,coef,-0.0021,+0.0281*,+0.0028,+0.0240*,-0.0000,+0.0242*,+0.0114,+0.0256*,-0.0223,+0.0225
+d_ln_unit_var_lag,tstat,(-0.20),(1.74),(0.25),(1.89),(-0.00),(1.75),(0.75),(1.71),(-0.95),(1.46)
+roa_lag,coef,+0.0056,+0.0051,+0.0052,+0.0051,-0.0230*,+0.0007,+0.0059,+0.0008,-0.0028,+0.0029
+roa_lag,tstat,(0.57),(0.31),(0.53),(0.30),(-1.76),(0.04),(0.41),(0.04),(-0.18),(0.17)
+size_lag,coef,-0.0613**,-0.2443***,-0.0627**,-0.2410***,-0.8335***,-0.2546***,-0.2324**,-0.2774***,-0.2356*,-0.2342***
+size_lag,tstat,(-2.04),(-2.84),(-2.08),(-2.92),(-4.40),(-2.96),(-2.10),(-2.80),(-1.82),(-2.92)
+d_ln_unit_var_x_market,coef,-,-,-0.0338,+0.0025,-,-,-,-,-,-
+d_ln_unit_var_x_market,tstat,,,(-1.13),(0.06),,,,,,
+d_ln_unit_var_x_custody,coef,-,-,-0.0070,+0.0143,-,-,-,-,-,-
+d_ln_unit_var_x_custody,tstat,,,(-0.26),(0.39),,,,,,
+lcr_ratio_lag,coef,-,-,-,-,-0.0003,-0.0016,-,-,-,-
+lcr_ratio_lag,tstat,,,,,(-0.50),(-1.62),,,,
+d_ln_unit_var_x_lcr,coef,-,-,-,-,+0.0009**,-0.0003,-,-,-,-
+d_ln_unit_var_x_lcr,tstat,,,,,(2.64),(-0.57),,,,
+cet1_ratio_lag,coef,-,-,-,-,-,-,+0.0044,+0.0067,-,-
+cet1_ratio_lag,tstat,,,,,,,(1.37),(1.10),,
+d_ln_unit_var_x_cet1,coef,-,-,-,-,-,-,+0.0288***,-0.0100,-,-
+d_ln_unit_var_x_cet1,tstat,,,,,,,(3.15),(-1.35),,
+slr_ratio_lag,coef,-,-,-,-,-,-,-,-,+0.0014,-0.0049
+slr_ratio_lag,tstat,,,,,,,,,(0.22),(-0.60)
+d_ln_unit_var_x_slr,coef,-,-,-,-,-,-,-,-,+0.0095,-0.0187
+d_ln_unit_var_x_slr,tstat,,,,,,,,,(0.67),(-1.24)
+Status,,OK,OK,OK,OK,OK,OK,OK,OK,OK,OK
+Error,,,,,,,,,,,
+N (obs),,318,192,318,192,89,191,156,192,145,190
+N (banks),,8,8,8,8,8,8,8,8,8,8
+R2,,0.0071,0.1438,0.0090,0.1497,-0.1239,0.1783,0.0852,0.1741,0.0433,0.1629
+Bank FE,,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
+Time FE,,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes,Yes
+Period,,2010-03-31 - 2019-12-31,2020-03-31 - 2025-12-31,2010-03-31 - 2019-12-31,2020-03-31 - 2025-12-31,2015-03-31 - 2019-12-31,2020-03-31 - 2025-12-31,2015-03-31 - 2019-12-31,2020-03-31 - 2025-12-31,2015-03-31 - 2019-12-31,2020-03-31 - 2025-12-31
+Lagged leverage,,No,No,No,No,No,No,No,No,No,No

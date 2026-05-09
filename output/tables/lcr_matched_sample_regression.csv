@@ -1,0 +1,16 @@
+variable,stat,M1_LCR_matched_sample
+d_ln_unit_var_lag,coef,+0.0231**
+d_ln_unit_var_lag,tstat,(2.52)
+size_lag,coef,-0.1212*
+size_lag,tstat,(-1.74)
+roa_lag,coef,+0.0176*
+roa_lag,tstat,(1.72)
+Status,,OK
+Error,,
+N (obs),,280
+N (banks),,8
+R2,,-0.0270
+Bank FE,,Yes
+Time FE,,Yes
+Period,,2015-03-31 - 2025-12-31
+Lagged leverage,,No

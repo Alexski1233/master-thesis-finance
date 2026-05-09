@@ -1,0 +1,30 @@
+variable,stat,M3_LCR_lagged_leverage,M3_CET1_lagged_leverage,M3_SLR_lagged_leverage
+d_ln_unit_var_lag,coef,+0.0258**,+0.0205**,+0.0160*
+d_ln_unit_var_lag,tstat,(2.36),(2.16),(1.85)
+d_ln_leverage_lag,coef,-0.2757***,-0.2198***,-0.3036***
+d_ln_leverage_lag,tstat,(-6.62),(-7.52),(-7.18)
+lcr_ratio_lag,coef,+0.0002,-,-
+lcr_ratio_lag,tstat,(0.38),,
+d_ln_unit_var_x_lcr,coef,+0.0003,-,-
+d_ln_unit_var_x_lcr,tstat,(1.58),,
+roa_lag,coef,+0.0181,+0.0143,+0.0135
+roa_lag,tstat,(1.49),(1.09),(1.11)
+size_lag,coef,-0.0978*,-0.0988**,-0.0793**
+size_lag,tstat,(-1.66),(-2.09),(-2.05)
+cet1_ratio_lag,coef,-,+0.0035,-
+cet1_ratio_lag,tstat,,(1.26),
+d_ln_unit_var_x_cet1,coef,-,+0.0012,-
+d_ln_unit_var_x_cet1,tstat,,(0.16),
+slr_ratio_lag,coef,-,-,+0.0024
+slr_ratio_lag,tstat,,,(0.85)
+d_ln_unit_var_x_slr,coef,-,-,-0.0144***
+d_ln_unit_var_x_slr,tstat,,,(-4.82)
+Status,,OK,OK,OK
+Error,,,,
+N (obs),,280,348,335
+N (banks),,8,8,8
+R2,,0.0261,-0.0076,0.0020
+Bank FE,,Yes,Yes,Yes
+Time FE,,Yes,Yes,Yes
+Period,,2015-03-31 - 2025-12-31,2015-03-31 - 2025-12-31,2015-03-31 - 2025-12-31
+Lagged leverage,,Yes,Yes,Yes

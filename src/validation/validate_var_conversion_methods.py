@@ -3,23 +3,31 @@ Validate alternative VaR conversion methods using Bank of America data.
 
 The script compares two ways of converting VaR(95%) to VaR(99%) against the
 observed Bank of America VaR(99%) series in the raw Excel workbook.
+
+Purpose in the thesis:
+- Bank of America reports both 95% and 99% VaR.
+- This makes it possible to check how well different conversion rules reproduce
+  an actually observed 99% VaR series.
+- The output figure is used as a methodological robustness check.
 """
 
 from pathlib import Path
+import os
+import tempfile
 import numpy as np
 import pandas as pd
+
+os.environ.setdefault("MPLCONFIGDIR", str(Path(tempfile.gettempdir()) / "matplotlib"))
+os.environ.setdefault("XDG_CACHE_HOME", str(Path(tempfile.gettempdir()) / "fontconfig"))
+
 import matplotlib.pyplot as plt
 
-# -----------------------------
-# Conversion factors
-# -----------------------------
-# Gaussian ratio = z_0.99 / z_0.95
+# The Gaussian method rescales 95% VaR to 99% VaR using normal-distribution
+# quantiles. The BoA factor is a simple empirical benchmark used only here.
 GAUSSIAN_RATIO = 2.326348 / 1.644854  # ≈ 1.414319
 BOA_FACTOR = 2.0
 
-# -----------------------------
-# Paths
-# -----------------------------
+# Input workbook and output figure.
 INPUT_FILE = Path("data/raw/VaR_python.xlsx")
 SHEET_NAME = "new"
 
@@ -27,10 +35,9 @@ OUTPUT_DIR = Path("output/figures")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 OUT_FIG = OUTPUT_DIR / "boa_validation_comprehensive_excel.png"
 
-# -----------------------------
-# Helper metrics implemented locally to avoid an extra dependency.
-# -----------------------------
+# Helper metrics implemented locally to avoid adding another dependency.
 def r2_score_simple(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Calculate R-squared between actual and predicted VaR."""
     y_true = np.asarray(y_true, dtype=float)
     y_pred = np.asarray(y_pred, dtype=float)
     ss_res = np.sum((y_true - y_pred) ** 2)
@@ -38,6 +45,7 @@ def r2_score_simple(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     return float(1 - ss_res / ss_tot) if ss_tot > 0 else np.nan
 
 def rmse_simple(y_true: np.ndarray, y_pred: np.ndarray) -> float:
+    """Calculate root mean squared error between actual and predicted VaR."""
     y_true = np.asarray(y_true, dtype=float)
     y_pred = np.asarray(y_pred, dtype=float)
     return float(np.sqrt(np.mean((y_true - y_pred) ** 2)))
@@ -48,7 +56,8 @@ def norm_bank(x: str) -> str:
 
 
 def main():
-    # Read the workbook without headers because metadata is stored in rows.
+    # Read the workbook without headers because bank names and confidence
+    # levels are stored in separate rows instead of a normal header row.
     raw = pd.read_excel(INPUT_FILE, sheet_name=SHEET_NAME, header=None)
 
     # Excel layout (0-based indexing):
@@ -58,7 +67,8 @@ def main():
     bank_row = raw.iloc[1].ffill()
     level_row = raw.iloc[2]
 
-    # Build column names such as "bankofamerica_0.95".
+    # Build explicit column names such as "bankofamerica_0.95" so the
+    # relevant Bank of America columns can be selected reliably.
     cols = []
     for b, lvl in zip(bank_row, level_row):
         b_txt = norm_bank(b) if pd.notna(b) else ""
@@ -94,7 +104,8 @@ def main():
     if df.empty:
         raise RuntimeError("No valid Bank of America observations with both var_95 and var_99.")
 
-    # Generate VaR(99%) predictions under both conversion methods.
+    # Generate VaR(99%) predictions under both conversion methods. These are
+    # compared against the actually reported 99% VaR observations.
     df["predicted_gaussian"] = df["var_95"] * GAUSSIAN_RATIO
     df["predicted_boa"] = df["var_95"] * BOA_FACTOR
 
@@ -108,8 +119,11 @@ def main():
     r2_b = r2_score_simple(df["var_99"].to_numpy(), df["predicted_boa"].to_numpy())
     rmse_b = rmse_simple(df["var_99"].to_numpy(), df["predicted_boa"].to_numpy())
 
-    # Build the validation figure.
-    fig = plt.figure(figsize=(16, 12))
+    # Build the validation figure:
+    # 1) actual and predicted VaR over time
+    # 2) Gaussian prediction against actual VaR
+    # 3) empirical-factor prediction against actual VaR
+    fig = plt.figure(figsize=(16, 12), constrained_layout=True)
     gs = fig.add_gridspec(3, 2, hspace=0.3, wspace=0.3)
 
     # Panel 1: time-series comparison.
@@ -158,7 +172,6 @@ def main():
     )
 
     # Save the figure to disk.
-    plt.tight_layout()
     plt.savefig(OUT_FIG, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
